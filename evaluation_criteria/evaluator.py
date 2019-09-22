@@ -56,8 +56,8 @@ def binary_classification_performance(predict, target):
     digits_data = [["8", accuracy, precision, recall, F1],
                    ["7", 1-accuracy, 1 - precision, 1-recall, F1_2]]
 
-    row_format = '{0:<10} {1:>10} {2:>10} {3:>10} {3:>10}'
+    row_format = '{0:<10} {1:>10} {2:>10} {3:>10} {4:>10}'
     print(row_format.format("Digit", *metric_list))
     for row in digits_data:
-        print('{0:<10} {1:>10.2f} {2:>10.2f} {3:>10.2f} {3:>10.2f}'.format(*row))
+        print('{0:<10} {1:>10.2f} {2:>10.2f} {3:>10.2f} {4:>10.2f}'.format(*row))
 
