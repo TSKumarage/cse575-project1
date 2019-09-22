@@ -46,7 +46,18 @@ def binary_classification_performance(predict, target):
             else:
                 fn += 1
 
-    print("Accuracy of the classification: ", tp/len(target))
-    print("Precision of the classification: ", tp/(tp+fp))
-    print("Recall of the classification: ", tp / (tp + fn))
+    accuracy = tp/len(target)
+    precision = tp/(tp + fp)
+    recall = tp / (tp + fn)
+    F1 = 2 * (precision*recall)/(precision+recall)
+    F1_2 = 2 * ((1-precision)*(1-recall))/((1-precision)+(1-recall))
+
+    metric_list = ["Accuracy", "Precision", "Recall", "F1"]
+    digits_data = [["8", accuracy, precision, recall, F1],
+                   ["7", 1-accuracy, 1 - precision, 1-recall, F1_2]]
+
+    row_format = '{0:<10} {1:>10} {2:>10} {3:>10} {3:>10}'
+    print(row_format.format("Digit", *metric_list))
+    for row in digits_data:
+        print('{0:<10} {1:>10.2f} {2:>10.2f} {3:>10.2f} {3:>10.2f}'.format(*row))
 
