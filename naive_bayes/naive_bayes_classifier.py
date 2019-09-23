@@ -45,7 +45,7 @@ class NaiveBayes:
         for class_val in class_labels:  # For each class estimate the density parameters
 
             partition = []
-            for i in range(x.shape[0]):
+            for i in range(x.shape[0]): # Extract the training samples for a given class
                 if y[i] == class_val:
                     partition.append(x[i])
 
@@ -66,6 +66,7 @@ class NaiveBayes:
 
             feature_density_params['covariance_matrix'] = cov
 
+            #  prior probability estimation for the class - P(y=class)
             feature_density_params['class_prior_probability'] = len(partition)/len(x)
 
             self.density_parameters[class_val] = feature_density_params
@@ -79,7 +80,7 @@ class NaiveBayes:
             for i in range(data_mat.shape[1]):
                 cov[i][i] = np.std(data_mat[:, i])
 
-        else:
+        else:  # For the completeness of the program Cov estimation without Naive assumption
             cov = np.cov(data_mat)
 
         return cov

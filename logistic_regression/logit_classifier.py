@@ -12,7 +12,7 @@ import preprocess.feature_extraction as extrct
 import evaluation_criteria.evaluator as eval
 
 
-def main():
+def main():  # This main() function is used to test the LR Classifier implementation
     data_mat = extrct.open_data()
 
     train = data_mat['trX']
@@ -24,18 +24,17 @@ def main():
     train_x = extrct.feature_extract(train)
     test_x = extrct.feature_extract(test)
 
-    print(train_x)
-    print(test_x)
+    learningrate_tune = [0.01, 0.001, 0.0001, 0.00001]
 
-    print(train_lbl.shape)
+    for rate in learningrate_tune:
+        print("Learning rate:  ", rate)
+        model = LogisticRegression()
 
-    model = LogisticRegression()
+        model.train(x=train_x, y=train_lbl, learning_rate=rate, epochs=1000, display=False)
 
-    model.train(x=train_x, y=train_lbl, epochs=100)
+        predict = model.predict(x=test_x)
 
-    predict = model.predict(x=test_x)
-
-    print(predict)
+        eval.binary_classification_performance(predict=predict, target=test_lbl)
 
 
 class LogisticRegression:
@@ -45,7 +44,7 @@ class LogisticRegression:
         self.classifier_threshold = classifier_threshold
 
     def logit_sigmoid(self, x, w):
-
+        # Sigmoid function matrix form implementation
         regression_value = np.dot(x, w)
 
         sigmoid = 1.0 / (1 + np.exp(-regression_value))
@@ -53,7 +52,7 @@ class LogisticRegression:
         return sigmoid
 
     def log_likelihood(self, x, y, weights):
-
+        # log likelihood for given w
         regression_value = np.dot(x, weights)
 
         ll = np.sum(y * regression_value - np.log(1 + np.exp(regression_value)))
@@ -61,24 +60,29 @@ class LogisticRegression:
         return ll
 
     def weight_initialize(self, shape=1):
-
-        if self.weight_init == 'random':
+        #  Initial weights
+        if self.weight_init == 'random':  # random weight initialization
             return np.random.rand(shape)
 
-        if self.weight_init == 'zero':
+        if self.weight_init == 'zero':  # trivial weight initialization
             return np.zeros(shape)
 
-    def train(self, x, y, epochs, learning_rate=0.00005, display=True):
+    def train(self, x, y, epochs, learning_rate=0.0005, display=True):
+        #  Train the classifier
+
+        print("Training Logistic Regression Classifier..")
+
+        print("Optimizing weights..")
 
         weights = self.weight_initialize(x.shape[1])
 
-        for iteration in range(epochs):
+        for iteration in range(epochs):  # Iterate and try to find the MLE for w using gradient ascent
 
             logit_values = self.logit_sigmoid(x, weights)  # Prediction value using sigmoid function for each row in x
 
             error = y - logit_values          # Error between the prediction and the target label
 
-            gradient = np.dot(x.T, error)    # Calculate gradient of the
+            gradient = np.dot(x.T, error)    # Calculate gradient of the logit function
 
             weights += learning_rate*gradient              # gradient ascent
 
@@ -88,8 +92,9 @@ class LogisticRegression:
         self.optimized_weights = weights
 
     def predict(self, x):
+        # Prediction value using sigmoid function for each row in x
 
-        logit_values = self.logit_sigmoid(x, self.optimized_weights)  # Prediction value using sigmoid function for each row in x
+        logit_values = self.logit_sigmoid(x, self.optimized_weights)
 
         prediction_list = []
         for prediction in logit_values:
